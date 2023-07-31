@@ -24,7 +24,7 @@ const List = () => {
 		{
 			id: 2,
 			img: feature2,
-			img: feature22,
+			img2: feature22,
 			title: 'Long dress',
 			isNew: true,
 			oldPrice: 25,
@@ -42,7 +42,7 @@ const List = () => {
 		{
 			id: 4,
 			img: feature4,
-			img: feature44,
+			img2: feature44,
 			title: 'New Fashion',
 			isNew: true,
 			oldPrice: 20,
