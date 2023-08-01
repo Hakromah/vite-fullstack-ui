@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './FeatureProducts.scss';
 import Card from '../card/Card';
 import feature1 from '/img/feature1.jpg';
@@ -9,6 +9,7 @@ import feature3 from '/img/feature3.jpg';
 import feature33 from '/img/feature33.jpg';
 import feature4 from '/img/feature4.jpg';
 import feature44 from '/img/feature44.jpg';
+import axios from 'axios';
 
 const FeatureProducts = ({ type }) => {
 	const featureData = [
@@ -49,6 +50,29 @@ const FeatureProducts = ({ type }) => {
 			price: 20,
 		},
 	];
+
+	// Frist Fetch api data from backend
+	const [products, setProducts] = useState([]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const data = await axios.get(
+					process.env.REACT_APP_API_URL + '/products',
+					{
+						headers: {
+							Authorization: 'bearer' + process.env.REACT_APP_API_TOKEN,
+						},
+					}
+				);
+				console.log(data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		fetchData();
+	}, []);
+
 	return (
 		<div className="featuredProducts">
 			{/* FEATURED PRODUCTS TOP START*/}
