@@ -1,12 +1,14 @@
-import React from 'react';
-import { CgProfile } from 'react-icons/cg';
+import React, { useState } from 'react';
+import { FaRegUser } from 'react-icons/fa';
 import { BsCart3 } from 'react-icons/bs';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdOutlineFavoriteBorder, MdArrowDropDown } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
+import Cart from '../cart/Cart';
 
 const Navbar = () => {
+	const [openCart, setOpenCart] = useState(false);
 	return (
 		<div className="navbar">
 			<div className="wrapper">
@@ -68,9 +70,12 @@ const Navbar = () => {
 					</div>
 					<div className="icons">
 						<AiOutlineSearch size={20} />
-						<CgProfile size={20} />
+						<FaRegUser size={20} />
 						<MdOutlineFavoriteBorder size={20} />
-						<div className="cartIcon">
+						<div
+							className="cartIcon"
+							onClick={() => setOpenCart(!openCart)}
+						>
 							<BsCart3 size={20} />
 							<span className="quantity">0</span>
 						</div>
@@ -78,6 +83,7 @@ const Navbar = () => {
 				</div>
 				{/* Right part end */}
 			</div>
+			{openCart && <Cart />}
 		</div>
 	);
 };
