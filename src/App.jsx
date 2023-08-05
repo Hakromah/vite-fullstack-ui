@@ -5,8 +5,14 @@ import Product from './pages/product/product';
 import Navbar from './components/navbar/Navbar';
 import Footer from './components/footer/Footer';
 import './App.css';
+import { useEffect } from 'react';
 
 const Layout = () => {
+	useEffect(() => {
+		window.process = {
+			...window.process,
+		};
+	}, []);
 	return (
 		<div className="app">
 			<Navbar />
