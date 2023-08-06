@@ -1,45 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Products.scss';
 import List from '../../components/list/List';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import useFetch from '../../hooks/useFetch';
+
 
 const Products = () => {
 	const catId = parseInt(useParams().id); // it has been conversted to integger
 	const [maxPrice, setMaxPrice] = useState(1000);
-	const [sort, setSort] = useState(null);
+	const [sort, setSort] = useState('asc');
 	const [selectedSubCats, setSelectedSubCats] = useState([]);
-	const [data, setData] = useState(null);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(false);
 
-	//Fetch start for categories
-	useEffect(() => {
-		const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
-		const fetchData = async () => {
-			try {
-				setLoading(true);
-				const res = await axios.get(
-					`${
-						import.meta.env.VITE_APP_API_URL
-					}/sub-categories?[filters][categories][id][$eq]=${catId}`,
-					{
-						headers: {
-							Authorization: ` bearer ${strapiApiToken} `,
-						},
-					}
-				);
-				setData(res.data.data);
-				setLoading(false);
-			} catch (error) {
-				setError(true);
-				setLoading(true);
-			}
-		};
-		fetchData();
-	}, []);
+	const { data, loading, error } = useFetch(
+		`/sub-categories?[filters][categories][id][$eq]=${catId}`
+	);
 
-	// Fetch end for categories
 	const handleChange = (e) => {
 		const value = e.target.value;
 		const isChecked = e.target.checked;
@@ -50,7 +25,6 @@ const Products = () => {
 				: selectedSubCats.filter((item) => item !== value)
 		);
 	};
-	console.log(selectedSubCats);
 
 	return (
 		<div className="products">

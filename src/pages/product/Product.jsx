@@ -3,71 +3,113 @@ import './Product.scss';
 import { BiCartAdd } from 'react-icons/bi';
 import { MdFavoriteBorder } from 'react-icons/md';
 import { FaBalanceScale } from 'react-icons/fa';
+import useFetch from '../../hooks/useFetch';
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/cartReducer';
 
 const Product = () => {
-	const [selectedImg, setSelectedImg] = useState(0);
+	const { id } = useParams();
+	const [selectedImg, setSelectedImg] = useState('img');
 	const [quantity, setQuantity] = useState(1);
-	const images = ['/img/image1.jpg', '/img/image2.jpg'];
 
+	const dishpatch = useDispatch();
+	//const images = ['/img/image1.jpg', '/img/image2.jpg'];
+	const { data, loading, error } = useFetch(`/products/${id}?populate=*`);
 	return (
 		<div className="product">
-			<div className="left">
-				<div className="images">
-					<img src={images[0]} alt="" onClick={() => setSelectedImg(0)} />
-					<img src={images[1]} alt="" onClick={() => setSelectedImg(1)} />
-				</div>
-				<div className="mainImg">
-					<img src={images[selectedImg]} alt="" />
-				</div>
-			</div>
-			{/* Right Part start */}
-			<div className="right">
-				<h1>Product Dtails</h1>
-				<span className="price">&#36;52</span>
-				<p>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo,
-					deserunt laboriosam dignissimos repudiandae libero quo veniam
-					quam, earum quasi modi minima voluptate. Exercitationem commodi,
-					illo fuga aut autem quasi! Sequi?
-				</p>
-				<div className="quantity">
-					<button
-						onClick={() =>
-							setQuantity((prev) => (prev === 1 ? 1 : prev - 1))
-						}
-					>
-						-
-					</button>
-					{quantity}
-					<button onClick={() => setQuantity((prev) => prev + 1)}>
-						+
-					</button>
-				</div>
-				<button className="add">
-					<BiCartAdd /> ADD TO CART
-				</button>
-				<div className="links">
-					<div className="item">
-						<MdFavoriteBorder /> ADD TO WISH LIST
+			{loading ? (
+				'loading'
+			) : (
+				<>
+					<div className="left">
+						<div className="images">
+							<img
+								src={
+									`${import.meta.env.VITE_APP_UPLOAD_URL}` +
+									data?.attributes?.img?.data?.attributes?.url
+								}
+								alt="first image"
+								onClick={() => setSelectedImg('img')}
+							/>
+							<img
+								src={
+									`${import.meta.env.VITE_APP_UPLOAD_URL}` +
+									data?.attributes?.img2?.data?.attributes?.url
+								}
+								alt="second image"
+								onClick={() => setSelectedImg('img2')}
+							/>
+						</div>
+						<div className="mainImg">
+							<img
+								src={
+									`${import.meta.env.VITE_APP_UPLOAD_URL}` +
+									data?.attributes[selectedImg]?.data?.attributes?.url
+								}
+								alt="main image"
+							/>
+						</div>
 					</div>
-					<div className="item">
-						<FaBalanceScale /> ADD TO COMPARE
+					{/* Right Part start */}
+					<div className="right">
+						<h1>{data?.attributes?.title}</h1>
+						<span className="price">&#36;{data?.attributes?.price}</span>
+						<p>{data?.attributes?.desc}</p>
+						<div className="quantity">
+							<button
+								onClick={() =>
+									setQuantity((prev) => (prev === 1 ? 1 : prev - 1))
+								}
+							>
+								-
+							</button>
+							{quantity}
+							<button onClick={() => setQuantity((prev) => prev + 1)}>
+								+
+							</button>
+						</div>
+						<button
+							className="add"
+							onClick={() =>
+								dishpatch(
+									addToCart({
+										id: data.id,
+										title: data.attributes.title,
+										desc: data.attributes.desc,
+										price: data.attributes.price,
+										img: data.attributes.img.data.attributes.url,
+										quantity,
+									})
+								)
+							}
+						>
+							<BiCartAdd /> ADD TO CART
+						</button>
+						<div className="links">
+							<div className="item">
+								<MdFavoriteBorder /> ADD TO WISH LIST
+							</div>
+							<div className="item">
+								<FaBalanceScale /> ADD TO COMPARE
+							</div>
+						</div>
+						<div className="info">
+							<span> Vendor: Yağmur</span>
+							<span> Product type: Women Coat</span>
+							<span> Tag: Coat, Women, Top</span>
+						</div>
+						<hr />
+						<div className="info">
+							<span>DESCRIPTION</span>
+							<hr />
+							<span>ADDITIONAL INFORMATION</span>
+							<hr />
+							<span>FAQ</span>
+						</div>
 					</div>
-				</div>
-				<div className="info">
-					<span> Vendor: Yağmur</span>
-					<span> Product type: Women Coat</span>
-					<span> Tag: Coat, Women, Top</span>
-				</div>
-				<hr />
-				<div className="info">
-					<span>DESCRIPTION</span>
-					<hr />
-					<span>ADDITIONAL INFORMATION</span>
-					<hr />
-					<span>FAQ</span>
-				</div>
-			</div>
+				</>
+			)}
 			{/* Right Part start */}
 		</div>
 	);

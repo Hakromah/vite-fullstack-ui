@@ -6,9 +6,12 @@ import { MdOutlineFavoriteBorder, MdArrowDropDown } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
 import Cart from '../cart/Cart';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
 	const [openCart, setOpenCart] = useState(false);
+
+	const products = useSelector((state) => state.cart.products);
 	return (
 		<div className="navbar">
 			<div className="wrapper">
@@ -77,7 +80,7 @@ const Navbar = () => {
 							onClick={() => setOpenCart(!openCart)}
 						>
 							<BsCart3 size={20} />
-							<span className="quantity">0</span>
+							<span className="quantity">{products.length}</span>
 						</div>
 					</div>
 				</div>

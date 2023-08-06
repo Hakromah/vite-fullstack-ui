@@ -1,63 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './FeatureProducts.scss';
 import Card from '../card/Card';
-import axios from 'axios';
+import useFetch from '../../hooks/useFetch';
 
 const FeatureProducts = ({ type }) => {
-	// Frist Fetch api data from backend
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(false);
-
-	useEffect(() => {
-		const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
-		const fetchData = async () => {
-			try {
-				setLoading(true);
-				const res = await axios.get(
-					`${
-						import.meta.env.VITE_APP_API_URL
-					}/products?populate=*&[filters][type][$eq]=${type}`,
-					{
-						headers: {
-							Authorization: ` bearer ${strapiApiToken} `,
-						},
-					}
-				);
-				setData(res.data.data);
-				setTimeout(() => {
-					setLoading(false);
-				}, 3000);
-			} catch (error) {
-				setError(true);
-				setLoading(false);
-			}
-		};
-		fetchData();
-	}, []);
-	// useEffect(() => {
-	// 	const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
-	// 	const fetchData = async () => {
-	// 		try {
-	// 			const res = await axios.get(
-	// 				`${
-	// 					import.meta.env.VITE_APP_API_URL
-	// 				}/products?populate=*&[filters][type][$eq]=${type}`,
-	// 				{
-	// 					headers: {
-	// 						Authorization: ` bearer ${strapiApiToken} `,
-	// 					},
-	// 				}
-	// 			);
-	// 			setData(res.data.data);
-	// 		} catch (error) {
-	// 			console.log(error);
-	// 		}
-	// 	};
-	// 	setTimeout(() => {
-	// 		fetchData();
-	// 	}, 5000);
-	// }, []);
+	// Frist Fetch api data from backen
+	const { data, loading, error } = useFetch(
+		`/products?populate=*&[filters][type][$eq]=${type}`
+	);
 
 	return (
 		<div className="featuredProducts">
