@@ -36,7 +36,6 @@ const Categories = () => {
 					</button>
 				</div>
 			</div>
-
 			{/* BIG COLUMN */}
 			<div className="col col-lg">
 				{/* Big col to row */}

@@ -1,12 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Products.scss';
 import List from '../../components/list/List';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Products = () => {
 	const catId = parseInt(useParams().id); // it has been conversted to integger
 	const [maxPrice, setMaxPrice] = useState(1000);
 	const [sort, setSort] = useState(null);
+	const [selectedSubCats, setSelectedSubCats] = useState([]);
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(false);
+
+	//Fetch start for categories
+	useEffect(() => {
+		const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				const res = await axios.get(
+					`${
+						import.meta.env.VITE_APP_API_URL
+					}/sub-categories?[filters][categories][id][$eq]=${catId}`,
+					{
+						headers: {
+							Authorization: ` bearer ${strapiApiToken} `,
+						},
+					}
+				);
+				setData(res.data.data);
+				setLoading(false);
+			} catch (error) {
+				setError(true);
+				setLoading(true);
+			}
+		};
+		fetchData();
+	}, []);
+
+	// Fetch end for categories
+	const handleChange = (e) => {
+		const value = e.target.value;
+		const isChecked = e.target.checked;
+
+		setSelectedSubCats(
+			isChecked
+				? [...selectedSubCats, value]
+				: selectedSubCats.filter((item) => item !== value)
+		);
+	};
+	console.log(selectedSubCats);
+
 	return (
 		<div className="products">
 			{/* category left start */}
@@ -14,22 +59,17 @@ const Products = () => {
 				{/* filter by categories start */}
 				<div className="filterItem">
 					<h2>Products Categories</h2>
-					<div className="inputItem">
-						<input type="checkbox" id="1" value={1} />
-						<label htmlFor="1">Shoes</label>
-					</div>
-					<div className="inputItem">
-						<input type="checkbox" id="2" value={2} />
-						<label htmlFor="2">Accessory</label>
-					</div>
-					<div className="inputItem">
-						<input type="checkbox" id="3" value={3} />
-						<label htmlFor="3">Coat</label>
-					</div>
-					<div className="inputItem">
-						<input type="checkbox" id="4" value={4} />
-						<label htmlFor="4">Skirt</label>
-					</div>
+					{data?.map((item) => (
+						<div className="inputItem" key={item.id}>
+							<input
+								type="checkbox"
+								id={item.id}
+								value={item.id}
+								onChange={handleChange}
+							/>
+							<label htmlFor={item.id}>{item.attributes.title}</label>
+						</div>
+					))}
 				</div>
 				{/* filter by categories end */}
 
@@ -78,7 +118,12 @@ const Products = () => {
 
 			<div className="right">
 				<img className="catImg" src="/img/sea1.jpg" alt="" />
-				<List catId={catId} maxPrice={maxPrice} sort={sort} />
+				<List
+					catId={catId}
+					maxPrice={maxPrice}
+					sort={sort}
+					subCats={selectedSubCats}
+				/>
 			</div>
 		</div>
 	);

@@ -6,13 +6,18 @@ import axios from 'axios';
 const FeatureProducts = ({ type }) => {
 	// Frist Fetch api data from backend
 	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(false);
 
 	useEffect(() => {
 		const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
 		const fetchData = async () => {
 			try {
+				setLoading(true);
 				const res = await axios.get(
-					`${import.meta.env.VITE_APP_API_URL}/products?populate=*`,
+					`${
+						import.meta.env.VITE_APP_API_URL
+					}/products?populate=*&[filters][type][$eq]=${type}`,
 					{
 						headers: {
 							Authorization: ` bearer ${strapiApiToken} `,
@@ -20,12 +25,39 @@ const FeatureProducts = ({ type }) => {
 					}
 				);
 				setData(res.data.data);
+				setTimeout(() => {
+					setLoading(false);
+				}, 3000);
 			} catch (error) {
-				console.log(error);
+				setError(true);
+				setLoading(false);
 			}
 		};
 		fetchData();
 	}, []);
+	// useEffect(() => {
+	// 	const strapiApiToken = import.meta.env.VITE_APP_API_TOKEN;
+	// 	const fetchData = async () => {
+	// 		try {
+	// 			const res = await axios.get(
+	// 				`${
+	// 					import.meta.env.VITE_APP_API_URL
+	// 				}/products?populate=*&[filters][type][$eq]=${type}`,
+	// 				{
+	// 					headers: {
+	// 						Authorization: ` bearer ${strapiApiToken} `,
+	// 					},
+	// 				}
+	// 			);
+	// 			setData(res.data.data);
+	// 		} catch (error) {
+	// 			console.log(error);
+	// 		}
+	// 	};
+	// 	setTimeout(() => {
+	// 		fetchData();
+	// 	}, 5000);
+	// }, []);
 
 	return (
 		<div className="featuredProducts">
@@ -41,9 +73,15 @@ const FeatureProducts = ({ type }) => {
 				</p>
 			</div>
 			<div className="bottom">
-				{data.map((item) => (
-					<Card item={item} key={item.id} />
-				))}
+				{error ? (
+					'Something went wrong!'
+				) : loading ? (
+					<div className="loading">
+						<h1>loading...</h1>
+					</div>
+				) : (
+					data.map((item) => <Card item={item} key={item.id} />)
+				)}
 			</div>
 		</div>
 	);

@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 const Card = ({ item }) => {
 	const { title, price, isNew, oldPrice, img, img2 } = item.attributes;
 	const { url } = img.data.attributes;
-
-	console.log('This my title', title);
 	return (
 		<Link className="link" to={`/product/${item.id}`}>
 			<div className="card">
@@ -19,7 +17,7 @@ const Card = ({ item }) => {
 					/>
 					<img
 						src={
-							`${import.meta.env.VITE_APP_UPLOAD_URL}`+
+							`${import.meta.env.VITE_APP_UPLOAD_URL}` +
 							img2.data.attributes.url
 						}
 						alt=""
