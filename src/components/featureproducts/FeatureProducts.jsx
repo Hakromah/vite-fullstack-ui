@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './FeatureProducts.scss';
 import Card from '../card/Card';
 import useFetch from '../../hooks/useFetch';
@@ -8,7 +8,7 @@ const FeatureProducts = ({ type }) => {
 	const { data, loading, error } = useFetch(
 		`/products?populate=*&[filters][type][$eq]=${type}`
 	);
-
+	console.log(data);
 	return (
 		<div className="featuredProducts">
 			{/* FEATURED PRODUCTS TOP START*/}
@@ -30,7 +30,7 @@ const FeatureProducts = ({ type }) => {
 						<h1>loading...</h1>
 					</div>
 				) : (
-					data.map((item) => <Card item={item} key={item.id} />)
+					data?.map((item) => <Card item={item} key={item.id} />)
 				)}
 			</div>
 		</div>

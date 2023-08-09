@@ -1,5 +1,7 @@
 import cartReducer from './cartReducer';
 import { configureStore } from '@reduxjs/toolkit';
+//const stripe = require('stripe')('sk_test_26PHem9AhJZvU623DfE1x4sd');
+
 import {
 	persistStore,
 	persistReducer,

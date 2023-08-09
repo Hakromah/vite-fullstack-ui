@@ -4,11 +4,12 @@ import Card from '../card/Card';
 import useFetch from '../../hooks/useFetch';
 
 
+
 const List = ({ subCats, maxPrice, sort, catId }) => {
 	//Fetch start for categories
-	const { data, loading, error } = useFetch(
+	const { data, loading} = useFetch (
 		`/products?populate=*&[filters][categories][id]=${catId}${subCats.map(
-			(item) => `&[filters][sub_categories][id][$eq]=${item}`
+			(items) => `&[filters][sub_categories][id][$eq]=${items}`
 		)}&[filters][price][$lte]=${maxPrice}&sort=price:${sort}`
 	);
 	// Fetch end for categories
