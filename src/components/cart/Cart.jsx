@@ -4,7 +4,11 @@ import { MdOutlineDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem, resetCart } from '../../redux/cartReducer';
 import { loadStripe } from '@stripe/stripe-js';
-import axios from 'axios';
+import { makePaymentRequest } from '../../utils/api';
+
+const stripePromise = loadStripe(
+	`${import.meta.env.VITE_PUBLIC_STRAPE_PUBLISHABLE_KEY}`
+);
 
 const Cart = () => {
 	const products = useSelector((state) => state.cart.products);
@@ -18,29 +22,47 @@ const Cart = () => {
 	};
 
 	// payment api request and execution of the payment
-	const stripePromise = loadStripe(
-		'pk_test_51NcG27IXjUaKEtyjgKptFp33Q6fQytZ7rALaJtRINPnXmFSXXFG5v4YRM6ApVtkWa2QF3qwf0jrhGnrpb4AiZfCZ00RcwOh6SP'
-	);
-	const handlePayment = async () => {
-		const apiUrl = `${import.meta.env.VITE_APP_API_URL}`;
-		const apiToken = `${import.meta.env.VITE_APP_API_TOKEN}`;
 
-		const headers = {
-			Authorization: `Bearer ${apiToken}`,
-		};
+	const handleCheckout = async () => {
 		try {
-			const stripe = stripePromise;
-			const res = await axios.post(`${apiUrl}/orders`, {
-				headers,
+			const stripe = await stripePromise;
+			const res = await makePaymentRequest('/api/orders', {
 				products,
 			});
+
 			await stripe.redirectToCheckout({
 				sessionId: res.data.stripeSession.id,
 			});
 		} catch (error) {
-			console.log(error);
+			console.log(error.message);
 		}
 	};
+
+	// const [loading, setLoading] = useState(false);
+
+	// const handleCheckout = async () => {
+	// 	try {
+	// 		setLoading(true);
+	// 		const stripe = await stripePromise;
+
+	// 		// Fetch necessary payment data from your server, replace with your actual endpoint
+	// 		const response = await fetch('/api/orders');
+	// 		const paymentData = await response.json();
+
+	// 		// Initiate Stripe Checkout
+	// 		const { error } = await stripe.redirectToCheckout({
+	// 			sessionId: paymentData.sessionId,
+	// 		});
+
+	// 		if (error) {
+	// 			console.error('Error during checkout:', error);
+	// 		}
+	// 	} catch (err) {
+	// 		console.error('Error:', err);
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
 
 	return (
 		<div className="cart">
@@ -68,7 +90,7 @@ const Cart = () => {
 				<span>SUBTOTAL</span>
 				<span>&#36;{totalPrice()}</span>
 			</div>
-			<button onClick={handlePayment}>PROCEED TO CHECKOUT</button>
+			<button onClick={handleCheckout}>Checkout</button>
 			<span className="reset" onClick={() => dispatch(resetCart())}>
 				Reset Cart
 			</span>
