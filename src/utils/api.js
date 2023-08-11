@@ -24,5 +24,6 @@ export const makePaymentRequest = async (endpoint, payload) => {
 		body: JSON.stringify(payload),
 	});
 	const data = await res.json();
+	console.log(data);
 	return data;
 };

@@ -14,7 +14,7 @@ const Cart = () => {
 	const products = useSelector((state) => state.cart.products);
 	const dispatch = useDispatch();
 
-	const totalPrice = () => {
+	const totalPrice =() => {
 		let total = 0;
 		products.forEach((item) => (total += item.quantity * item.price));
 
@@ -26,15 +26,15 @@ const Cart = () => {
 	const handleCheckout = async () => {
 		try {
 			const stripe = await stripePromise;
-			const res = await makePaymentRequest('/api/orders', {
+			const res = await makePaymentRequest('/orders', {
 				products,
 			});
 
-			await stripe.redirectToCheckout({
+			 stripe.redirectToCheckout({
 				sessionId: res.data.stripeSession.id,
 			});
 		} catch (error) {
-			console.log(error.message);
+			//console.log(error);
 		}
 	};
 
